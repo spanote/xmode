@@ -21,6 +21,10 @@ class TailCloudWatchLog(ICommand):
                             action='store_true',
                             required=False,
                             help='Show log as it tails')
+        parser.add_argument('--follow', '-f',
+                            action='store_true',
+                            required=False,
+                            help='Constantly follow the updates')
         parser.add_argument('--aws-profile', '-p',
                             required=False,
                             help='User profile (used with assumed roles)')
@@ -28,7 +32,7 @@ class TailCloudWatchLog(ICommand):
                             required=False,
                             default='us-east-1',
                             help='User profile (used with assumed roles)')
-        parser.add_argument('--max-streams',
+        parser.add_argument('--max-streams', '-s',
                             required=False,
                             type=int,
                             default=2,
@@ -54,5 +58,5 @@ class TailCloudWatchLog(ICommand):
             print('No event handlers provided. All events go to STDOUT.')
             cwl.on('event', event_to_stdout)
 
-        cwl.tail(max_streams=args.max_streams)
+        cwl.tail(max_streams=args.max_streams, follow=args.follow)
 
