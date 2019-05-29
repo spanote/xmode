@@ -1,2 +1,2 @@
 imports:
-  - xmode.aws
+  - xmode.cli.aws

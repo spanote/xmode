@@ -6,5 +6,5 @@ import sys
 
 if __name__ == '__main__':
     main(dict(
-        imports=['xmode.aws'],
+        imports=['xmode.cli.aws'],
     ))
