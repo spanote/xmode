@@ -12,11 +12,12 @@ if sys.version_info < _minimum_version:
 
 setup(name='xmode',
       version='0.1',
-      description='Common Tools for Code Analysis',
+      description='Experimental Libraries and Common Tools for Code/Data Analysis',
       author='Juti Noppornpitak',
       author_email='jnopporn@shiroyuki.com',
       url='https://github.com/shiroyuki/xmode',
       packages=['xmode',
+                'xmode.db',
                 'xmode.providers',
                 'xmode.utils'],
       classifiers = [#'Development Status :: 5 - Production/Stable',
