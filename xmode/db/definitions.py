@@ -11,3 +11,5 @@ Float = NewType('Float', float)
 Text = NewType('Text', str)
 DateTime = NewType('DateTime', datetime)
 DatastoreType = TypeVar('DatastoreType', UUID, String, Boolean, Integer, Float, Text)
+
+known_definitions = (UUID, Boolean, DateTime, Integer, Float, String, Text)

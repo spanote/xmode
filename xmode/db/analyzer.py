@@ -1,7 +1,7 @@
 from re import compile
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Optional, Union, Type
 
-from .definitions import UUID, Boolean, DateTime, Integer, String, Text
+from .definitions import known_definitions
 from .spec_model import ClassSpecification, Constraint, MappingDefinition, SavedQuery
 
 
@@ -83,8 +83,9 @@ class Analyzer:
         setattr(cls, metadata_prop_name, class_spec)
 
         class_spec = spec(cls)
+
         class_spec.mappings = [
-            Analyzer._analyze_mapping(k, v)
+            Analyzer._analyze_mapping(cls, k, v)
             for k, v in cls.__annotations__.items()
             if k[0] != '_'
         ]
@@ -92,18 +93,20 @@ class Analyzer:
         return class_spec
 
     @staticmethod
-    def _analyze_mapping(attr_name: str, annotation: Any) -> MappingDefinition:
+    def _analyze_mapping(cls: Type, attr_name: str, annotation: Any) -> MappingDefinition:
         common_info = dict(attr_name=attr_name,
                            attr_type=annotation,
                            field_name=attr_name,
                            nullable=False)
-        common_info.update(Analyzer._convert_to_field_type(annotation))
+        common_info.update(Analyzer._convert_to_field_type(cls, attr_name, annotation))
         return MappingDefinition(**common_info)
 
     @staticmethod
-    def _convert_to_field_type(annotation) -> Dict[str, Union[str, bool]]:
+    def _convert_to_field_type(cls: Type, attr_name: str, annotation) -> Dict[str, Union[str, bool]]:
+        internal_label = f'{cls.__module__}.{cls.__name__}/{attr_name}:{annotation}'
+
         # Predefined Types
-        if annotation in [UUID, Boolean, DateTime, Integer, String, Text]:
+        if annotation in known_definitions:
             return dict(field_type=annotation)
 
         # Built-in Types
@@ -111,7 +114,7 @@ class Analyzer:
         matches = Analyzer.__re_typing_name__.search(string_repr_type)
 
         if not matches:
-            raise NonConvertableAnnotationError(annotation.__name__, annotation)
+            raise NonConvertableAnnotationError(f'Failed to match Python\'s annotation ({internal_label})')
 
         kind = matches.groupdict()['kind']
 
@@ -121,14 +124,14 @@ class Analyzer:
             for template_annotation in annotation.__args__:
                 if template_annotation == type(None):
                     continue
-                template_spec = Analyzer._convert_to_field_type(template_annotation)
+                template_spec = Analyzer._convert_to_field_type(cls, attr_name, template_annotation)
                 break
 
             template_spec['nullable'] = True
 
             return template_spec
 
-        raise NonConvertableAnnotationError(annotation.__name__, annotation)
+        raise NonConvertableAnnotationError(f'Unable to handle the annotation ({internal_label})')
 
 
 class NonConvertableAnnotationError(TypeError):

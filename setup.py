@@ -11,7 +11,7 @@ if sys.version_info < _minimum_version:
 
 
 setup(name='xmode',
-      version='0.4',
+      version='0.5',
       description='Experimental Libraries and Common Tools for Code/Data Analysis',
       author='Juti Noppornpitak',
       author_email='jnopporn@shiroyuki.com',
