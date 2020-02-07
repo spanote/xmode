@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List, Type
 
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
@@ -33,6 +33,22 @@ class Core:
             cursor = c.execute(text(query), params) if params else c.execute(text(query))
             result = cursor.fetchall()
         return result
+
+    def initialize(self, *table_classes: List[Type]):
+        with create_engine(self.base_url).connect() as c:
+            c.execute(f'CREATE DATABASE IF NOT EXISTS {self.db_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')
+
+        with self.connect() as c:
+            for cls in table_classes:
+                c.execute(self.sql_generator.convert_class_to_create_query(cls))
+
+    def deinitialize(self):
+        """
+        Deinitialize the database setup
+        THIS IS DESIGNED FOR TESTING ONLY.
+        """
+        with create_engine(self.base_url).connect() as c:
+            c.execute(f'DROP DATABASE IF EXISTS {self.db_name}')
 
 
 class Session:
