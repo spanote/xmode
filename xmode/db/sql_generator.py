@@ -1,9 +1,23 @@
+from abc import ABC, abstractmethod
+
 from .analyzer import spec
 from .spec_model import ClassSpecification
 from .definitions import UUID, Boolean, DateTime, Integer, String, Text
 
 
-class MySQL:
+class SqlGenerator(ABC):
+    @staticmethod
+    @abstractmethod
+    def convert_class_to_create_query(cls) -> str:
+        ...
+
+    @staticmethod
+    @abstractmethod
+    def generate_create_query(s: ClassSpecification) -> str:
+        ...
+
+
+class MySQL(SqlGenerator):
     @staticmethod
     def convert_class_to_create_query(cls) -> str:
         class_spec = spec(cls)

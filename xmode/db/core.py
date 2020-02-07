@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List, Type
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 
+from xmode.db.sql_generator import SqlGenerator
 from ..logger_factory import LoggerFactory
 
 logger = LoggerFactory.get(__name__)
@@ -13,6 +14,10 @@ class Core:
     def __init__(self, base_url: str, db_name: str):
         self.db_name = db_name
         self.base_url = base_url
+
+    @property
+    def sql_generator(self) -> SqlGenerator:
+        raise NotImplementedError()
 
     @property
     @lru_cache(maxsize=1)
