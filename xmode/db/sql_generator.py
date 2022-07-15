@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from .analyzer import spec
 from .spec_model import ClassSpecification
-from .definitions import UUID, Boolean, DateTime, Integer, String, Text
+from .definitions import UUID, Boolean, DateTime, Integer, String, Text, LongText
 
 
 class SqlGenerator(ABC):
@@ -31,7 +31,8 @@ class MySQL(SqlGenerator):
             DateTime: 'DATETIME',
             Integer: 'INTEGER(11)',
             String: 'VARCHAR(255)',
-            Text: 'TEXT'
+            Text: 'TEXT',
+		LongText: 'LongText'
         }
 
         definitions = []
