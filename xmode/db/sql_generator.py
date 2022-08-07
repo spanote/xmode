@@ -32,7 +32,7 @@ class MySQL(SqlGenerator):
             Integer: 'INTEGER(11)',
             String: 'VARCHAR(255)',
             Text: 'TEXT',
-		LongText: 'LongText'
+            LongText: 'LONGTEXT'
         }
 
         definitions = []
